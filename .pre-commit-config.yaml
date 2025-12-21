@@ -1,0 +1,110 @@
+
+# Pre-commit hooks for local security validation
+# Install: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+    # Secret detection
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8:18.0
+    hooks:
+      - id : gitleaks 
+        name: Detect secrets (gitleaks)
+        description: Detect secrets using gitleaks 
+        entry: gitleaks detect --source . --verbose --exit-code 1
+        language: system 
+        stages: [commit]
+        pass_filenames: false 
+
+
+    # YAML validation and linting 
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: yaml-unsafe
+      - name: YAML syntax check
+        types: [yaml]
+      - id: end-of-file-fixer
+        name: Fix end of file
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+      - id: check-case-conflict
+        name: Check for case conflicts
+      - id: check-merge-conflict
+        name: Check for merge conflicts 
+      - id: detect-private-key
+        name: Detect private keys
+
+    
+    # Dockerfile linting 
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks: 
+      - id: hadolint-docker
+        name: Lint Dockerfile
+        types: [dockerfile]
+
+    # JavaScript/JSON validation
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.45.0
+    hooks: 
+      - id: eslint
+        name: Javascript Linting (eslint)
+        types: [javascript]
+        additional_dependencies:
+        - eslint
+        - eslint-config-standard 
+        - eslint-plugin-import
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0-alpha.9-for-vscode
+    hooks:
+      - id: prettier
+      - name: Code formatting (prettier)
+        types: [json, markdown, yaml]
+
+    # Bash script linting 
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.5
+    hooks: 
+      - id: shellcheck
+        name: Shell script linting (shellcheck)
+        types: [shell]
+
+    # Commit message validation
+  - repo: https://github.io/bridgecrew.io/checkov
+    rev: 1.1.238
+    hooks: 
+      - id: checkov
+        name: Checkov (IaC security)
+        types: [yaml, json, dockerfile, terraform]
+        entry: checkov --framework dockerfile,kubernetes,yaml --quiet
+        pass_filenames: false
+        language: python
+        additional_dependencies: [checkov]
+
+      # License checking (if needed for compliance)
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.1
+    hooks:
+      - id: python-safety-dependencies-check
+        name: Python safety check
+        types: [python]
+
+        # Global configuration
+    default_language_version:
+    python: python3.11
+    node: "18.0.0"
+
+    # Skip these files (large, generated, vendored)
+    exclude: |
+      (?x)^(
+      node_modules/|
+      dist/|
+      build/|
+      \.terraform/|
+      vendored
+      \.venv/|
+      venv
+      )
+
