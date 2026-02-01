@@ -1,6 +1,6 @@
 # Core Network Scanning Libraries
 python-nmap==0.7.1
-scapy==2.5.0
+scapy==2.7.0
 
 # DNS and Domain Information 
 dnspython==2.6.1
@@ -8,7 +8,7 @@ python-whois==0.9.4
 
 
 # HTTP Requests 
-requests==2.31.0
+requests==2.32.0
 urllibs==2.2.0
 
 
