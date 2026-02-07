@@ -26,7 +26,7 @@ except ImportError:
 try:
     from prometheus_client import start_http_server, Counter, Gauge, Histogram
 except ImportError:
-    print("ERROR: prormtheus-client not installed")
+    print("ERROR: prormetheus-client not installed")
     print("Fix: pip install prometheus-client")
     sys.exit(1)
 
@@ -60,3 +60,10 @@ except ImportError:
         ]
     )
     logger = logging.getLogger(__name__)
+
+
+# Prometheus metrics
+SCAN_TOTAL = Counter('network_recon_scans_total', 'Total number of scans performed')
+HOSTS_DISCOVERED = Guage('network_recon_hosts_discovered', 'Number of hosts discovered')
+PORTS_FOUND = Counter('network_recon_ports_found', 'Total open ports found')
+SCAN_DURATION = Histogram('network_recon_scan_durations_seconds', 'Scan duration')
